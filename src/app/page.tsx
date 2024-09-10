@@ -32,7 +32,7 @@ const Calendar: React.FC = () => {
     endDate: Date | undefined
   ) => {
     if (startDate && endDate) {
-      return `${dayjs(startDate).format("DD")} - ${dayjs(endDate).format(
+      return `${dayjs(startDate).format("DD")}-${dayjs(endDate).format(
         "DD MMM"
       )}`;
     }
@@ -52,57 +52,56 @@ const Calendar: React.FC = () => {
       </div>
       <div className="flex justify-between items-center p-3 w-[50vh] rounded-3xl bg-[#fff] border border-[#979ca0] h-[60px]">
         <span>When</span>
-        <CustomButton
-          className="underline"
-          onClick={handleSelectDates}
-          ariaLabel="Select dates"
-        >
+        <CustomButton onClick={handleSelectDates} ariaLabel="Select dates">
           {formatDateRange(startDate, endDate)}
         </CustomButton>
       </div>
       {showCalendar && (
-        <div className="calendar-container">
+        <div className="calendar-container relative">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DateRangeCalendar"]}>
               <DemoItem>
-                <DateRangeCalendar disablePast calendars={1} onChange={handleDateChange} />
+                <DateRangeCalendar
+                  disablePast
+                  calendars={1}
+                  onChange={handleDateChange}
+                />
               </DemoItem>
             </DemoContainer>
+            <div className="flex justify-between items-center m-0 p-0 absolute bottom-5 left-[30px] w-[312px]">
+              <button
+                className="underline"
+                onClick={() => {
+                  setStartDate(undefined);
+                  setEndDate(undefined);
+                }}
+              >
+                reset
+              </button>
+              <CustomButton
+                onClick={handleClose}
+                className="bg-[#1d273d] text-center items-center text-[#fff] px-4"
+                ariaLabel="Close calendar"
+              >
+                Next
+              </CustomButton>
+            </div>
           </LocalizationProvider>
-          <div className="flex justify-between items-center m-0 p-0">
-            <button
-              onClick={() => {
-                setStartDate(undefined);
-                setEndDate(undefined);
-              }}
-            >
-              Clear
-            </button>
-            <CustomButton
-              onClick={handleClose}
-              className="bg-[#1d273d] text-center items-center text-[#fff] px-4"
-              ariaLabel="Close calendar"
-            >
-              Next
-            </CustomButton>
-          </div>
         </div>
       )}
       <div className="flex justify-between items-center p-3 w-[50vh] rounded-3xl bg-[#fff] border border-[#979ca0] h-[60px]">
         <span>Guests</span>
-        <CustomButton
-          className="underline"
-          onClick={handleClose}
-          ariaLabel="Select guests"
-        >
+        <CustomButton onClick={handleClose} ariaLabel="Select guests">
           Select guests
         </CustomButton>
       </div>
       <div className="flex justify-between underline">
-        <CustomButton  onClick={() => {
-                setStartDate(undefined);
-                setEndDate(undefined);
-              }}>
+        <CustomButton
+          onClick={() => {
+            setStartDate(undefined);
+            setEndDate(undefined);
+          }}
+        >
           Clear all
         </CustomButton>
         <CustomButton

@@ -25,9 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="grid justify-center">
-        {children}
-      </body>
+      <body className="grid justify-center">{children}</body>
     </html>
   );
 }
