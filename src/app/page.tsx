@@ -1,9 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import CustomButton from "./components/CustomButton";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-// import "./calendar.css"; // Custom CSS for styling
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
+import { DateRangeCalendar } from "@mui/x-date-pickers-pro/DateRangeCalendar";
+import dayjs from "dayjs";
+import "./globals.css";
 
 const Calendar: React.FC = () => {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -24,6 +27,18 @@ const Calendar: React.FC = () => {
     setEndDate(end || undefined);
   };
 
+  const formatDateRange = (
+    startDate: Date | undefined,
+    endDate: Date | undefined
+  ) => {
+    if (startDate && endDate) {
+      return `${dayjs(startDate).format("DD")} - ${dayjs(endDate).format(
+        "DD MMM"
+      )}`;
+    }
+    return "Select dates";
+  };
+
   return (
     <div className="flex flex-col gap-8 bg-[#fff] mt-6 rounded-t p-6 pt-8 pb-12 rounded-b-[85px]">
       <div className="text-end">
@@ -35,7 +50,6 @@ const Calendar: React.FC = () => {
           x
         </CustomButton>
       </div>
-
       <div className="flex justify-between items-center p-3 w-[50vh] rounded-3xl bg-[#fff] border border-[#979ca0] h-[60px]">
         <span>When</span>
         <CustomButton
@@ -43,31 +57,33 @@ const Calendar: React.FC = () => {
           onClick={handleSelectDates}
           ariaLabel="Select dates"
         >
-          {startDate && endDate
-            ? `${startDate.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`
-            : "Select dates"}
+          {formatDateRange(startDate, endDate)}
         </CustomButton>
       </div>
-
       {showCalendar && (
         <div className="calendar-container">
-          <DatePicker
-            selected={startDate}
-            onChange={handleDateChange}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-            inline
-            monthsShown={1}
-          />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DateRangeCalendar"]}>
+              <DemoItem>
+                <DateRangeCalendar disablePast calendars={1} onChange={handleDateChange} />
+              </DemoItem>
+            </DemoContainer>
+          </LocalizationProvider>
           <div className="flex justify-between items-center m-0 p-0">
-            <button>clear</button>
+            <button
+              onClick={() => {
+                setStartDate(undefined);
+                setEndDate(undefined);
+              }}
+            >
+              Clear
+            </button>
             <CustomButton
               onClick={handleClose}
               className="bg-[#1d273d] text-center items-center text-[#fff] px-4"
               ariaLabel="Close calendar"
             >
-              next
+              Next
             </CustomButton>
           </div>
         </div>
@@ -82,9 +98,11 @@ const Calendar: React.FC = () => {
           Select guests
         </CustomButton>
       </div>
-
       <div className="flex justify-between underline">
-        <CustomButton onClick={() => {}} ariaLabel="Clear all">
+        <CustomButton  onClick={() => {
+                setStartDate(undefined);
+                setEndDate(undefined);
+              }}>
           Clear all
         </CustomButton>
         <CustomButton
