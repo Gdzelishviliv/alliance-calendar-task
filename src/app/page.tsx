@@ -1,17 +1,24 @@
 "use client";
 import React, { useState } from "react";
-import CustomButton from "./components/CustomButton";
+import CustomButton from "./components/_atoms/CustomButton";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
 import { DateRangeCalendar } from "@mui/x-date-pickers-pro/DateRangeCalendar";
 import dayjs from "dayjs";
 import "./globals.css";
+import Guests from "./components/_organisms/guests/Guests";
 
 const Calendar: React.FC = () => {
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>(undefined);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>(undefined);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showGuests, setShowGuests] = useState(false);
+  const [guests, setGuests] = useState({
+    adults: 0,
+    children: 0,
+    pets: 0,
+  });
 
   const handleSelectDates = () => {
     setShowCalendar(true);
@@ -21,30 +28,46 @@ const Calendar: React.FC = () => {
     setShowCalendar(false);
   };
 
-  const handleDateChange = (dates: [Date | null, Date | null]) => {
+  const handleGuests = () => {
+    setShowGuests(true);
+  };
+
+  const handleGuestsClose = () => {
+    setShowGuests(false);
+  };
+
+  const handleDateChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null]) => {
     const [start, end] = dates;
     setStartDate(start || undefined);
     setEndDate(end || undefined);
   };
 
   const formatDateRange = (
-    startDate: Date | undefined,
-    endDate: Date | undefined
+    startDate: dayjs.Dayjs | undefined,
+    endDate: dayjs.Dayjs | undefined
   ) => {
     if (startDate && endDate) {
-      return `${dayjs(startDate).format("DD")}-${dayjs(endDate).format(
-        "DD MMM"
-      )}`;
+      return `${startDate.format("DD")}-${endDate.format("DD MMM")}`;
     }
     return "Select dates";
   };
+
+  const handleGuestsChange = (newGuests: { adults: number; children: number; pets: number }) => {
+    setGuests(newGuests);
+    setShowGuests(false);
+  };
+
+  const totalGuests = guests.adults + guests.children + guests.pets;
 
   return (
     <div className="flex flex-col gap-8 bg-[#fff] mt-6 rounded-t p-6 pt-8 pb-12 rounded-b-[85px]">
       <div className="text-end">
         <CustomButton
           className="text-xl"
-          onClick={handleClose}
+          onClick={() => {
+            handleClose();
+            handleGuestsClose();
+          }}
           ariaLabel="Close calendar"
         >
           x
@@ -76,7 +99,7 @@ const Calendar: React.FC = () => {
                   setEndDate(undefined);
                 }}
               >
-                reset
+                Reset
               </button>
               <CustomButton
                 onClick={handleClose}
@@ -91,15 +114,17 @@ const Calendar: React.FC = () => {
       )}
       <div className="flex justify-between items-center p-3 w-[50vh] rounded-3xl bg-[#fff] border border-[#979ca0] h-[60px]">
         <span>Guests</span>
-        <CustomButton onClick={handleClose} ariaLabel="Select guests">
-          Select guests
+        <CustomButton onClick={handleGuests} ariaLabel="Select guests">
+          {totalGuests > 0 ? `${totalGuests} guests` : "Select guests"}
         </CustomButton>
       </div>
+      {showGuests && <Guests  onChange={handleGuestsChange} />}
       <div className="flex justify-between underline">
         <CustomButton
           onClick={() => {
             setStartDate(undefined);
             setEndDate(undefined);
+            setGuests({ adults: 0, children: 0, pets: 0 });
           }}
         >
           Clear all

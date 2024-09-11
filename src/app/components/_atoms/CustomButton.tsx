@@ -1,11 +1,7 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC } from "react";
+import { CustomButtonProps } from "./types";
 
-interface CustomButtonProps {
-  onClick: () => void;
-  children: ReactNode;
-  className?: string;
-  ariaLabel?: string;
-}
+
 
 const CustomButton: FC<CustomButtonProps> = ({
   onClick,
